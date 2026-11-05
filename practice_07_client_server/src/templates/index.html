@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Список задач</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 730px; margin: 40px auto; padding: 0 15px; color: #222; }
+        h1 { color: #333; }
+        .add-form { display: flex; gap: 8px; margin-bottom: 20px; }
+        input { flex: 1; min-width: 0; padding: 10px; border: 1px solid #aaa; border-radius: 5px; }
+        button { border: 0; border-radius: 5px; padding: 9px 13px; cursor: pointer; }
+        .primary { background: #3478c0; color: white; }
+        .small { background: #e3e3e3; }
+        .delete { background: #f6cccc; }
+        ul { list-style: none; padding: 0; }
+        li { display: flex; align-items: center; gap: 8px; padding: 12px; margin: 7px 0; background: #f3f3f3; border-radius: 5px; }
+        .title { flex: 1; }
+        li.done .title { text-decoration: line-through; color: #888; }
+        .status { color: #555; font-size: 13px; }
+        .actions { display: flex; gap: 5px; }
+        .error { color: #a50000; }
+    </style>
+</head>
+<body>
+    <h1>Мой список задач</h1>
+    {% if error %}<p class="error">{{ error }}</p>{% endif %}
+    <form class="add-form" method="POST" action="{{ url_for('index') }}">
+        <input type="text" name="title" placeholder="Новая задача..." required>
+        <button type="submit" class="primary">Добавить</button>
+    </form>
+
+    {% if items %}
+        <ul>
+        {% for item in items %}
+            <li class="{% if item.status == 'done' %}done{% endif %}">
+                <span class="title">#{{ item.id }} — {{ item.title }}</span>
+                <span class="status">{{ item.status }}</span>
+                <div class="actions">
+                    <form method="POST" action="{{ url_for('toggle_done', task_id=item.id) }}">
+                        <button class="small" type="submit" title="Изменить статус">
+                            {% if item.status == 'done' %}↩{% else %}✓{% endif %}
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ url_for('delete_task', task_id=item.id) }}"
+                          onsubmit="return confirm('Удалить задачу #{{ item.id }}?');">
+                        <button class="delete" type="submit" title="Удалить">Удалить</button>
+                    </form>
+                </div>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Список пуст. Добавь первую задачу!</p>
+    {% endif %}
+</body>
+</html>

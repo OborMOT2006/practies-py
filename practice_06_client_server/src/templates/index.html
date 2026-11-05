@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Список задач</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 15px; }
+        h1 { color: #333; }
+        form.add { display: flex; gap: 8px; margin-bottom: 20px; }
+        input { flex: 1; padding: 9px; border: 1px solid #aaa; border-radius: 5px; }
+        button { padding: 9px 15px; border: 0; border-radius: 5px; background: #3478c0; color: white; cursor: pointer; }
+        ul { list-style: none; padding: 0; }
+        li { padding: 10px; margin: 6px 0; background: #f2f2f2; border-radius: 5px; }
+        .done { color: #888; text-decoration: line-through; }
+        .error { color: #b00020; }
+    </style>
+</head>
+<body>
+    <h1>Мой список задач</h1>
+    {% if error %}<p class="error">{{ error }}</p>{% endif %}
+    <form class="add" method="POST" action="{{ url_for('index') }}">
+        <input type="text" name="title" placeholder="Новая задача" required>
+        <button type="submit">Добавить</button>
+    </form>
+    {% if items %}
+        <ul>
+        {% for item in items %}
+            <li class="{% if item.status == 'done' %}done{% endif %}">
+                #{{ item.id }} — {{ item.title }} [{{ item.status }}]
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Список пуст. Добавь первую задачу!</p>
+    {% endif %}
+</body>
+</html>
